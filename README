@@ -1,0 +1,88 @@
+========================
+The PHP PayPal Project
+
+A PHP Lib that connects to PayPal's
+Website Payments Pro service.
+
+By Jamie Rumbelow. Init.
+Copyright (c)2009 Jamie Rumbelow.
+========================
+
+If you've downloaded this by seeing the BinaryCake screencast remember to keep checking back at the GitHub repo and on BinaryCake for updates.
+
+Rightyo, I've finally got round to creating this library. Feel free to use it with whatever, I can't guarantee everything will work as I've just finished it and it's more BETA than Google, but I've tested it loads and should be pretty nice :)
+
+Load it like normal (works with both vanilla PHP and CodeIgniter), and call the setup() method, passing in your account credentials. You can then call any method found in the PayPal documentation, with a few changes.
+
+	1. The method names are changed from CamelCase to codeigniter_case. Par example:
+		
+		DoDirectPayment => do_direct_payment
+		MassPay					=> mass_pay
+		
+		etc.
+		
+	2. The argument order is slightly different. Due to PHP's sometimes irritating nature, I've had to make the decision to have all argument 'sections' that have REQUIRED arguments first, and others following in the order they are in the docs. Par example number 2:
+	
+		--- PayPal Docs
+			
+			Request Params
+			----
+			
+				one (required)
+				two (required)
+				
+			Shipping Info
+			----
+			
+				address 1 (optional)
+				
+			Billing
+			----
+			
+				card_number (required)
+				
+		--- The argument order here would be:
+		
+			Request Params,
+			Billing,
+			Shipping
+			
+	3. The parameters take associative arrays with the KEY=>VALUE system in the docs.
+	
+	4. The METHOD parameter should never be passed. It's filled in automagically.
+	
+So, a quick example, this code will connect and setup, and then make a payment with the user's credit card:
+
+	$this->load->library('paypal');
+	$this->paypal->setup('api', 'details', 'here');
+
+	$request = array(
+		'PAYMENTACTION' => 'Sale',
+		'IPADDRESS'			=> $_SERVER['REMOTE_ADDR']		
+	);
+
+	$card = array(
+		'CREDITCARDTYPE'	=> 'Visa',
+		'ACCT'						=> '4715903553026652',
+		'EXPDATE'					=> '052019',
+		'CVV2'						=> '123'
+	);
+
+	$address = array(
+		'STREET'			=> '1 Main St',
+		'CITY'				=> 'San Jose',
+		'STATE'				=> 'CA',
+		'COUNTRYCODE'	=> 'US',
+		'ZIP'					=> '95131'
+	);
+
+	$details = array(
+		'AMT'						=> '52.50',
+		'CURRENCYCODE'	=> 'USD'
+	);
+
+	$this->paypal->do_direct_payment($request, $card, $address, $details);
+	
+Anyway, I'll get round to some proper documentation at some point. Until then, I won't provide support. If you've got any suggestions, send me an email at jamie@jamierumbelow.net.
+
+Later dudes and dudettes.
