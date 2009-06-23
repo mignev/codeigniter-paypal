@@ -49,7 +49,7 @@ class Ipn {
 			$string .= '<head>';
 				$string .= '<title>Redirecting to PayPal...</title>';
 				$string .= '<script type="text/javascript">
-	window.onready = function() {
+	window.onload = function() {
 		document.forms[\'paypal_form\'].submit();
 	}
 </script>';
@@ -69,7 +69,7 @@ class Ipn {
 		exit;
 	}
 	
-	public function validate($custom_hash) {
+	public function validate() {
 		$post_string = "cmd=_notify-validate";
 		
 		foreach ( $_POST as $key => $value )
@@ -79,7 +79,7 @@ class Ipn {
 			$value = urlencode(stripslashes($value));
 			$post_string .= "&$key=$value";
 		}
-		
+		log_message('error', 'validate data: '.json_encode($_POST));
 		$new_custom = json_decode(base64_decode($this->ipn_data['custom']));
 		$this->decrypted_custom = array();
 		
@@ -88,7 +88,7 @@ class Ipn {
 			$this->decrypted_custom[$key] = $value;
 		}
 		
-		if ( $this->_ipn_data['payment_status'] !== 'Completed' )
+		if ( $this->ipn_data['payment_status'] !== 'Completed' )
 		{
 			return FALSE;
 		}
@@ -111,7 +111,7 @@ class Ipn {
 			return FALSE;
 		}
 		
-		return array('paypal_data' => $this->_ipn_data, 'custom_data' => $this->_decrypted_custom);
+		return array('paypal_data' => $this->ipn_data, 'custom_data' => $this->decrypted_custom);
 	}
 	
 }
