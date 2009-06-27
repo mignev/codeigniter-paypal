@@ -38,6 +38,9 @@ class Ipn {
 	}
 	
 	public function add_data($key, $value) {
+		if ($key == 'custom') {
+			$value = json_encode($value);
+		}
 		$this->ipn_data[$key] = $value;
 	}
 	
@@ -79,10 +82,10 @@ class Ipn {
 			$value = urlencode(stripslashes($value));
 			$post_string .= "&$key=$value";
 		}
-		log_message('error', 'validate data: '.json_encode($_POST));
-		$new_custom = json_decode(base64_decode($this->ipn_data['custom']));
-		$this->decrypted_custom = array();
 		
+		$new_custom = json_decode(base64_decode(base64_decode($this->ipn_data['custom'])));
+		$this->decrypted_custom = array();
+		log_message('error', 'PayPal: IPN prob - '.base64_decode(base64_decode($this->ipn_data['custom'])));
 		foreach ( $new_custom as $key => $value )
 		{
 			$this->decrypted_custom[$key] = $value;
