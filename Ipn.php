@@ -85,7 +85,7 @@ class Ipn {
 		
 		$new_custom = json_decode(base64_decode(base64_decode($this->ipn_data['custom'])));
 		$this->decrypted_custom = array();
-		log_message('error', 'PayPal: IPN prob - '.base64_decode(base64_decode($this->ipn_data['custom'])));
+
 		foreach ( $new_custom as $key => $value )
 		{
 			$this->decrypted_custom[$key] = $value;
